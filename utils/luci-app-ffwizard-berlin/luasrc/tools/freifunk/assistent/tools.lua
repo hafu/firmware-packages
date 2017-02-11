@@ -1,7 +1,6 @@
 local sys = require "luci.sys"
 local util = require "luci.util"
 local uci = require "luci.model.uci".cursor()
-local sharenet = uci:get("ffwizard","settings","sharenet")
 
 module("luci.tools.freifunk.assistent.tools", package.seeall)
 
@@ -27,17 +26,6 @@ function firewall_zone_add_interface(name, interface)
 	local net = cursor:get("firewall", zone, "network")
 	local old = net or (cursor:get("network", name) and name)
 	cursor:set("firewall", zone, "network", (old and old .. " " or "") .. interface)
-	cursor:save("firewall")
-end
-
-
--- Adds masq src net to zone
-function firewall_zone_add_masq_src(name, src)
-	local cursor = uci.cursor()
-	local zone = firewall_find_zone(name)
-	local old = cursor:get("firewall", zone, "masq_src") or {}
-	table.insert(old,src)
-	cursor:set_list("firewall", zone, "masq_src", old)
 	cursor:save("firewall")
 end
 
